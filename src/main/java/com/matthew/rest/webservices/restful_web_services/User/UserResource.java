@@ -1,8 +1,10 @@
 package com.matthew.rest.webservices.restful_web_services.User;
 
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.ObjectInputFilter.Status;
+import java.net.URI;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -33,8 +35,13 @@ public class UserResource {
     }
     
     @PostMapping("/users")
-    public ResponseEntity<String> createUser(@RequestBody User user) {
-        service.save(user);
-        return new ResponseEntity<>("User created successfully", HttpStatus.CREATED);
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        User savedUser = service.save(user);
+        URI location = ServletUriComponentsBuilder
+            .fromCurrentRequest()
+            .path("/{id}")
+            .buildAndExpand(savedUser.getId())
+            .toUri();
+        return ResponseEntity.created(location).build();
     }
 }
