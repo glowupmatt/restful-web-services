@@ -33,7 +33,12 @@ public class UserDaoService {
         return user;
     }
 
-    // public void createUser(User user) {
-    //     users.add(user);
-    // }
+    public User deleteById(int id) {
+        Predicate<? super User> predicate = user -> user.getId().equals(id);
+        User user = users.stream().filter(predicate).findFirst().orElse(null);
+        if (user != null) {
+            users.remove(user);
+        }
+        return user;
+    }
 }

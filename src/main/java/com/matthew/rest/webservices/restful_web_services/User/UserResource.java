@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,22 +33,31 @@ public class UserResource {
     @GetMapping("/users/{id}")
     public User retrieveUser(@PathVariable int id) {
         User user = service.findOne(id);
+
+        if (user == null) {
+            throw new UserNotFoundException("id-" + id);
+        }
+
+        return user;
+    }
+    @DeleteMapping("/users/{id}")
+    public void deleteUser(@PathVariable int id) {
+        User user = service.deleteById(id);
         
         if (user == null) {
             throw new UserNotFoundException("id-" + id);
         }
-        
-        return user;
     }
     
     @PostMapping("/users")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         User savedUser = service.save(user);
         URI location = ServletUriComponentsBuilder
-            .fromCurrentRequest()
-            .path("/{id}")
-            .buildAndExpand(savedUser.getId())
-            .toUri();
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedUser.getId())
+                .toUri();
         return ResponseEntity.created(location).build();
     }
+    
 }
