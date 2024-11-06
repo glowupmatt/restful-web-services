@@ -51,6 +51,7 @@ public class UserResource {
     @PostMapping("/users")
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
         User savedUser = service.save(user);
+        //This is how you send back the URI of the created resource.
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
